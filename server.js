@@ -39,6 +39,7 @@ function verifyToken(req, res, next) {
   }
 }
 
+
 const cohere = new CohereClient({ token: "jDbPwePcgYbtfchNRt6ZICYLodCs7YYuO8IgbzmB" });
 
 const dsaKeywords = [
@@ -176,7 +177,7 @@ app.post('/chat/new', verifyToken, async (req, res) => {
 
 app.post('/chat', verifyToken, async (req, res) => {
   const { message, chatId } = req.body;
-
+  
   const parsed = parseOperationPrompt(message);
   const promptToSend = parsed
     ? buildExecutionPrompt(parsed.operation, parsed.array, parsed.target)
