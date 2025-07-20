@@ -31,7 +31,7 @@ function verifyToken(req, res, next) {
 
   const token = authHeader.split(' ')[1];
   try {
-    const decoded = jwt.verify(token, "0e0d246523dd884cb5a608cf47b23206a5b662d6c0a9cf6730d38a68a8eec4feea90c55a2199d2300545b3987bfd2966f595ca96e4cde6de4aa4f8538158872e");
+    const decoded = jwt.verify(token, "jDbPwePcgYbtfchNRt6ZICYLodCs7YYuO8IgbzmB");
     req.user = decoded;
     next();
   } catch (err) {
