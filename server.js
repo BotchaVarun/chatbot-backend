@@ -1,3 +1,4 @@
+
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -13,13 +14,13 @@ const User = require('./models/User');
 const Chat = require('./models/Chat');
 
 const app = express();
-const PORT = 8080;
+const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
-mongoose.connect("mongodb+srv://Venky:Venky%40123@chatbot.b9i5xrg.mongodb.net/dsabot?retryWrites=true&w=majority", {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => console.log("✅ MongoDB connected"))
@@ -31,7 +32,7 @@ function verifyToken(req, res, next) {
 
   const token = authHeader.split(' ')[1];
   try {
-    const decoded = jwt.verify(token, "jDbPwePcgYbtfchNRt6ZICYLodCs7YYuO8IgbzmB");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch (err) {
@@ -39,8 +40,7 @@ function verifyToken(req, res, next) {
   }
 }
 
-
-const cohere = new CohereClient({ token: "jDbPwePcgYbtfchNRt6ZICYLodCs7YYuO8IgbzmB" });
+const cohere = new CohereClient({ token: process.env.COHERE_API_KEY });
 
 const dsaKeywords = [
   "sort", "stack", "queue", "tree", "graph", "heap", "hash",
@@ -149,7 +149,7 @@ app.post('/auth/register', async (req, res) => {
   const user = new User({ username, password: hashed });
   await user.save();
 
-  const token = jwt.sign({ id: user._id, username }, "jDbPwePcgYbtfchNRt6ZICYLodCs7YYuO8IgbzmB");
+  const token = jwt.sign({ id: user._id, username }, process.env.JWT_SECRET);
   res.json({ token, username });
 });
 
@@ -161,7 +161,7 @@ app.post('/auth/login', async (req, res) => {
   const match = await bcrypt.compare(password, user.password);
   if (!match) return res.status(400).json({ error: "Invalid credentials" });
 
-  const token = jwt.sign({ id: user._id, username }, "jDbPwePcgYbtfchNRt6ZICYLodCs7YYuO8IgbzmB");
+  const token = jwt.sign({ id: user._id, username }, process.env.JWT_SECRET);
   res.json({ token, username });
 });
 
@@ -177,7 +177,7 @@ app.post('/chat/new', verifyToken, async (req, res) => {
 
 app.post('/chat', verifyToken, async (req, res) => {
   const { message, chatId } = req.body;
-  
+
   const parsed = parseOperationPrompt(message);
   const promptToSend = parsed
     ? buildExecutionPrompt(parsed.operation, parsed.array, parsed.target)
