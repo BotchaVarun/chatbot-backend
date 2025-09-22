@@ -28,7 +28,7 @@ app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname)));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 if (!process.env.MONGO_URI) console.error("❌ Missing MONGO_URI");
 if (!process.env.JWT_SECRET) console.error("❌ Missing JWT_SECRET");
 if (!process.env.COHERE_API_KEY) console.error("❌ Missing COHERE_API_KEY");
