@@ -13,7 +13,7 @@ const User = require('./models/User');
 const Chat = require('./models/Chat');
 
 const app = express();
-const PORT = 8080;
+const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
